@@ -10,11 +10,10 @@ import org.json.JSONObject;
 
 import in.gov.gst.auth.beans.TaxpayerSession;
 import in.gov.gst.beans.TaxpayerApiResponse;
-import in.gov.gst.exception.CryptoException;
+import in.gov.gst.exception.CryptographyException;
 import in.gov.gst.exception.GSTNException;
 import in.gov.gst.type.ENDPOINTS;
 import in.gov.gst.type.ENDPOINTS.URLPath;
-import in.gov.gst.type.Environment;
 import in.gov.gst.type.GoodsAndServicesTaxReturnType;
 import in.gov.gst.util.AppKeyUtil;
 import in.gov.gst.util.OtpUtil;
@@ -75,14 +74,14 @@ public class ProxyClient extends in.gov.gst.proxy.client.ProxyClient
 
 	public static String RESPONSE_PAYLOAD_ATTRUBUTE_REK = "rek";
 
-	public ProxyClient(final OkHttpClient client, String appKey, String encryptedAppKey, Environment environment,
+	public ProxyClient(final OkHttpClient client, String appKey, String encryptedAppKey, String baseUrl,
 	        String whiteListedIpAddress)
 	{
-		super(client, appKey, encryptedAppKey, environment, whiteListedIpAddress);
+		super(client, appKey, encryptedAppKey, baseUrl, whiteListedIpAddress);
 	}
 
 	public TaxpayerApiResponse generateOtp(final String version, final String userName, final String gstin)
-	        throws CryptoException, JSONException, IOException, GSTNException
+	        throws CryptographyException, JSONException, IOException, GSTNException
 	{
 
 		final Map<String, String> body = new HashMap<String, String>();
@@ -99,8 +98,9 @@ public class ProxyClient extends in.gov.gst.proxy.client.ProxyClient
 		headers.add(ProxyClient.HEADER_ATTRIBUTE_STATE_CD, gstin.substring(0, 2));
 		headers.add(ProxyClient.HEADER_ATTRIBUTE_IP, this.whiteListedIpAddress);
 
-		final Request request = new Request.Builder().url(ENDPOINTS.build(environment, URLPath.GSTN_TAX_PAYER, version))
-		        .headers(headers.build()).post(requestBody).build();
+		final Request request =
+		        new Request.Builder().url(ENDPOINTS.build(this.baseUrl, URLPath.GSTN_TAX_PAYER, version))
+		                .headers(headers.build()).post(requestBody).build();
 
 		final Response response = this.getClient().newCall(request).execute();
 
@@ -109,7 +109,7 @@ public class ProxyClient extends in.gov.gst.proxy.client.ProxyClient
 	}
 
 	public TaxpayerApiResponse verifyOtp(final String version, final String userName, final String gstin,
-	        final String otp) throws CryptoException, IOException, JSONException, GSTNException
+	        final String otp) throws CryptographyException, IOException, JSONException, GSTNException
 	{
 		final String encryptedOtp = OtpUtil.encrypt(this.appKey, otp);
 
@@ -129,8 +129,9 @@ public class ProxyClient extends in.gov.gst.proxy.client.ProxyClient
 		headers.add(ProxyClient.HEADER_ATTRIBUTE_STATE_CD, gstin.substring(0, 2));
 		headers.add(ProxyClient.HEADER_ATTRIBUTE_IP, this.whiteListedIpAddress);
 
-		final Request request = new Request.Builder().url(ENDPOINTS.build(environment, URLPath.GSTN_TAX_PAYER, version))
-		        .headers(headers.build()).post(requestBody).build();
+		final Request request =
+		        new Request.Builder().url(ENDPOINTS.build(this.baseUrl, URLPath.GSTN_TAX_PAYER, version))
+		                .headers(headers.build()).post(requestBody).build();
 
 		final Response response = this.getClient().newCall(request).execute();
 
@@ -139,7 +140,7 @@ public class ProxyClient extends in.gov.gst.proxy.client.ProxyClient
 	}
 
 	public TaxpayerApiResponse refreshSession(final TaxpayerSession taxpayerSession, final String version)
-	        throws CryptoException, JSONException, IOException, GSTNException
+	        throws CryptographyException, JSONException, IOException, GSTNException
 	{
 		final String newAppKey = AppKeyUtil.generateSecureKey();
 
@@ -163,8 +164,9 @@ public class ProxyClient extends in.gov.gst.proxy.client.ProxyClient
 		headers.add(HEADER_ATTRIBUTE_AUTH_TOKEN, taxpayerSession.getAuthToken());
 		headers.add(ProxyClient.HEADER_ATTRIBUTE_IP, this.whiteListedIpAddress);
 
-		final Request request = new Request.Builder().url(ENDPOINTS.build(environment, URLPath.GSTN_TAX_PAYER, version))
-		        .headers(headers.build()).post(requestBody).build();
+		final Request request =
+		        new Request.Builder().url(ENDPOINTS.build(this.baseUrl, URLPath.GSTN_TAX_PAYER, version))
+		                .headers(headers.build()).post(requestBody).build();
 
 		final Response response = this.getClient().newCall(request).execute();
 
@@ -178,7 +180,7 @@ public class ProxyClient extends in.gov.gst.proxy.client.ProxyClient
 	}
 
 	public TaxpayerApiResponse logout(final TaxpayerSession taxpayerSession, final String version)
-	        throws JSONException, IOException, CryptoException, GSTNException
+	        throws JSONException, IOException, CryptographyException, GSTNException
 	{
 
 		final Map<String, String> body = new HashMap<String, String>();
@@ -200,8 +202,9 @@ public class ProxyClient extends in.gov.gst.proxy.client.ProxyClient
 		headers.add(HEADER_ATTRIBUTE_AUTH_TOKEN, taxpayerSession.getAuthToken());
 		headers.add(ProxyClient.HEADER_ATTRIBUTE_IP, this.whiteListedIpAddress);
 
-		final Request request = new Request.Builder().url(ENDPOINTS.build(environment, URLPath.GSTN_TAX_PAYER, version))
-		        .headers(headers.build()).post(requestBody).build();
+		final Request request =
+		        new Request.Builder().url(ENDPOINTS.build(this.baseUrl, URLPath.GSTN_TAX_PAYER, version))
+		                .headers(headers.build()).post(requestBody).build();
 
 		final Response response = this.getClient().newCall(request).execute();
 
@@ -211,10 +214,10 @@ public class ProxyClient extends in.gov.gst.proxy.client.ProxyClient
 
 	public TaxpayerApiResponse get(final TaxpayerSession taxpayerSession, final URLPath urlPath, final String version,
 	        final Map<String, String> requestParams, final Map<String, String> requestHeaders)
-	        throws CryptoException, JSONException, IOException, GSTNException
+	        throws CryptographyException, JSONException, IOException, GSTNException
 	{
 
-		HttpUrl.Builder urlBuilder = HttpUrl.parse(ENDPOINTS.build(environment, urlPath, version)).newBuilder();
+		HttpUrl.Builder urlBuilder = HttpUrl.parse(ENDPOINTS.build(this.baseUrl, urlPath, version)).newBuilder();
 		urlBuilder.addQueryParameter(ProxyClient.QUERY_ATTRIBUTE_GSTIN, taxpayerSession.getGstin());
 		if (requestParams != null)
 		{
@@ -247,9 +250,9 @@ public class ProxyClient extends in.gov.gst.proxy.client.ProxyClient
 
 	public TaxpayerApiResponse post(final TaxpayerSession taxpayerSession, final URLPath urlPath, final String version,
 	        final String action, final Map<String, String> requestParams, final Map<String, String> requestHeaders,
-	        final JSONObject json) throws CryptoException, JSONException, IOException, GSTNException
+	        final JSONObject json) throws CryptographyException, JSONException, IOException, GSTNException
 	{
-		HttpUrl.Builder urlBuilder = HttpUrl.parse(ENDPOINTS.build(environment, urlPath, version)).newBuilder();
+		HttpUrl.Builder urlBuilder = HttpUrl.parse(ENDPOINTS.build(this.baseUrl, urlPath, version)).newBuilder();
 		if (requestParams != null)
 		{
 			for (Entry<String, String> queryParam : requestParams.entrySet())
@@ -286,10 +289,10 @@ public class ProxyClient extends in.gov.gst.proxy.client.ProxyClient
 
 	public TaxpayerApiResponse put(final TaxpayerSession taxpayerSession, final URLPath urlPath, final String version,
 	        final String action, final Map<String, String> requestParams, final Map<String, String> requestHeaders,
-	        final JSONObject json) throws CryptoException, IOException, JSONException, GSTNException
+	        final JSONObject json) throws CryptographyException, IOException, JSONException, GSTNException
 	{
 
-		HttpUrl.Builder urlBuilder = HttpUrl.parse(ENDPOINTS.build(environment, urlPath, version)).newBuilder();
+		HttpUrl.Builder urlBuilder = HttpUrl.parse(ENDPOINTS.build(this.baseUrl, urlPath, version)).newBuilder();
 		if (requestParams != null)
 		{
 			for (Entry<String, String> queryParam : requestParams.entrySet())
@@ -328,9 +331,9 @@ public class ProxyClient extends in.gov.gst.proxy.client.ProxyClient
 	public TaxpayerApiResponse post(final TaxpayerSession taxpayerSession, final URLPath urlPath, final String version,
 	        final String action, final GoodsAndServicesTaxReturnType rtnType, final Map<String, String> requestParams,
 	        final Map<String, String> requestHeaders, final JSONObject json)
-	        throws CryptoException, JSONException, IOException, GSTNException
+	        throws CryptographyException, JSONException, IOException, GSTNException
 	{
-		HttpUrl.Builder urlBuilder = HttpUrl.parse(ENDPOINTS.build(environment, urlPath, version)).newBuilder();
+		HttpUrl.Builder urlBuilder = HttpUrl.parse(ENDPOINTS.build(this.baseUrl, urlPath, version)).newBuilder();
 		if (requestParams != null)
 		{
 			for (Entry<String, String> queryParam : requestParams.entrySet())
@@ -382,9 +385,9 @@ public class ProxyClient extends in.gov.gst.proxy.client.ProxyClient
 	public TaxpayerApiResponse put(final TaxpayerSession taxpayerSession, final URLPath urlPath, final String version,
 	        final String action, final GoodsAndServicesTaxReturnType rtnType, final Map<String, String> requestParams,
 	        final Map<String, String> requestHeaders, final JSONObject json)
-	        throws CryptoException, JSONException, IOException, GSTNException
+	        throws CryptographyException, JSONException, IOException, GSTNException
 	{
-		HttpUrl.Builder urlBuilder = HttpUrl.parse(ENDPOINTS.build(environment, urlPath, version)).newBuilder();
+		HttpUrl.Builder urlBuilder = HttpUrl.parse(ENDPOINTS.build(this.baseUrl, urlPath, version)).newBuilder();
 		if (requestParams != null)
 		{
 			for (Entry<String, String> queryParam : requestParams.entrySet())
@@ -453,9 +456,9 @@ public class ProxyClient extends in.gov.gst.proxy.client.ProxyClient
 	public TaxpayerApiResponse postWithEVC(final TaxpayerSession taxpayerSession, final URLPath urlPath,
 	        final String version, final String action, final GoodsAndServicesTaxReturnType rtnType, final String pan,
 	        final String otp, final Map<String, String> requestParams, final Map<String, String> requestHeaders,
-	        final JSONObject json) throws CryptoException, JSONException, IOException, GSTNException
+	        final JSONObject json) throws CryptographyException, JSONException, IOException, GSTNException
 	{
-		HttpUrl.Builder urlBuilder = HttpUrl.parse(ENDPOINTS.build(environment, urlPath, version)).newBuilder();
+		HttpUrl.Builder urlBuilder = HttpUrl.parse(ENDPOINTS.build(this.baseUrl, urlPath, version)).newBuilder();
 		if (requestParams != null)
 		{
 			for (Entry<String, String> queryParam : requestParams.entrySet())

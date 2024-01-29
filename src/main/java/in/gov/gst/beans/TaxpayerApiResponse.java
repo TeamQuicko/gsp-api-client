@@ -5,7 +5,7 @@ import java.util.Map;
 import org.json.JSONObject;
 
 import in.gov.gst.auth.beans.TaxpayerSession;
-import in.gov.gst.exception.CryptoException;
+import in.gov.gst.exception.CryptographyException;
 import in.gov.gst.exception.VerificationException;
 import in.gov.gst.proxy.client.taxpayer.ProxyClient;
 import in.gov.gst.util.ResponseUtil;
@@ -29,19 +29,18 @@ public class TaxpayerApiResponse extends ApiResponse
 		return null;
 	}
 
-	public static JSONObject decrypt(final TaxpayerSession taxpayerSession,
-	        final TaxpayerApiResponse taxpayerApiResponse) throws CryptoException
+	public JSONObject decrypt(final TaxpayerSession taxpayerSession) throws CryptographyException
 	{
 
 		final String decryptedData = ResponseUtil.decrypt(taxpayerSession.getAppKey(), taxpayerSession.getSek(),
-		        taxpayerApiResponse.getRek(), taxpayerApiResponse.getData());
+		        this.getRek(), this.getData());
 
 		return new JSONObject(decryptedData);
 
 	}
 
 	public JSONObject decryptwithHMACVerification(final TaxpayerSession taxpayerSession)
-	        throws CryptoException, VerificationException
+	        throws CryptographyException, VerificationException
 	{
 
 		final String decryptedData = ResponseUtil.decryptwithHMACVerification(taxpayerSession.getAppKey(),

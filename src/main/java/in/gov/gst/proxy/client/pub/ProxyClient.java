@@ -10,7 +10,6 @@ import in.gov.gst.beans.PublicApiResponse;
 import in.gov.gst.exception.GSTNException;
 import in.gov.gst.type.ENDPOINTS;
 import in.gov.gst.type.ENDPOINTS.URLPath;
-import in.gov.gst.type.Environment;
 import okhttp3.Headers;
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
@@ -20,10 +19,10 @@ import okhttp3.Response;
 public class ProxyClient extends in.gov.gst.proxy.client.ProxyClient
 {
 
-	public ProxyClient(final OkHttpClient client, String appKey, String encryptedAppKey, Environment environment,
+	public ProxyClient(final OkHttpClient client, String appKey, String encryptedAppKey, String baseUrl,
 	        String whiteListedIpAddress)
 	{
-		super(client, appKey, encryptedAppKey, environment, whiteListedIpAddress);
+		super(client, appKey, encryptedAppKey, baseUrl, whiteListedIpAddress);
 	}
 
 	public static String QUERY_ACTION_SEARCH_TP = "TP";
@@ -36,7 +35,7 @@ public class ProxyClient extends in.gov.gst.proxy.client.ProxyClient
 	        final Map<String, String> requestHeaders) throws IOException, JSONException, GSTNException
 	{
 
-		HttpUrl.Builder urlBuilder = HttpUrl.parse(ENDPOINTS.build(environment, urlPath, version)).newBuilder();
+		HttpUrl.Builder urlBuilder = HttpUrl.parse(ENDPOINTS.build(this.baseUrl, urlPath, version)).newBuilder();
 		if (requestParams != null)
 		{
 			for (Entry<String, String> queryParam : requestParams.entrySet())

@@ -2,8 +2,8 @@ package com.quicko.gsp.api.client.pub;
 
 import com.quicko.gsp.api.auth.ApiSessionProvider;
 import com.quicko.gsp.api.exception.AuthorizationException;
-import com.quicko.gsp.api.exception.QuickoGSPAuthorizationException;
-import com.quicko.gsp.api.exception.QuickoGSPException;
+import com.quicko.gsp.api.exception.GSPException;
+import com.quicko.gsp.api.type.Environment;
 
 import java.io.IOException;
 import java.util.Map;
@@ -21,17 +21,16 @@ public class PublicClient
 	private in.gov.gst.proxy.client.pub.ProxyClient proxyClient;
 
 	public PublicClient(final OkHttpClient client, ApiSessionProvider apiSessionCredentialProvider, String appKey,
-	        String encryptedAppKey, String whiteListedIpAddress) throws AuthorizationException
+	        String encryptedAppKey, String whiteListedIpAddress, Environment environment) throws AuthorizationException
 	{
 		this.proxyClient = new in.gov.gst.proxy.client.pub.ProxyClient(client, appKey, encryptedAppKey,
-		        com.quicko.gsp.api.type.Environment.get(apiSessionCredentialProvider.getApiKey()),
-		        whiteListedIpAddress);
+		        environment.getHost(), whiteListedIpAddress);
 
 	}
 
 	public PublicApiResponse get(URLPath urlPath, String version, Map<String, String> requestParams,
 	        Map<String, String> requestHeaders)
-	        throws IOException, JSONException, GSTNException, QuickoGSPException, QuickoGSPAuthorizationException
+	        throws IOException, JSONException, GSTNException, GSPException, AuthorizationException
 	{
 		try
 		{
@@ -41,12 +40,12 @@ public class PublicClient
 		{
 			if (e.getApiResponse().httpStatusCode() == 500 && e.getApiResponse().getErrorCode() == "GEN5008")
 			{
-				throw new QuickoGSPException(e.getApiResponse());
+				throw new GSPException(e.getApiResponse());
 			}
 			else if (e.getApiResponse().httpStatusCode() == 453 && e.getApiResponse().getErrorCode() == "AUTH4035")
 			{
 
-				throw new QuickoGSPAuthorizationException(e.getApiResponse());
+				throw new AuthorizationException(e.getApiResponse());
 			}
 			throw e;
 		}

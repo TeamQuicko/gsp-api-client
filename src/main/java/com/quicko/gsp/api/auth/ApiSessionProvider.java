@@ -38,9 +38,14 @@ public class ApiSessionProvider
 
 	private ApiSession apiSession;
 
-	public ApiSessionProvider(final ApiUserCredentials apiUserCredentials) throws AuthorizationException
+	private Environment environment;
+
+	public ApiSessionProvider(final ApiUserCredentials apiUserCredentials, Environment environment)
+	        throws AuthorizationException
 	{
 		this.apiUserCredentials = apiUserCredentials;
+
+		this.environment = environment;
 
 		final OkHttpClient.Builder builder = new OkHttpClient.Builder();
 
@@ -94,10 +99,8 @@ public class ApiSessionProvider
 			final RequestBody requestBody = builder.build();
 
 			final Request request = new Request.Builder()
-			        .url(ENDPOINTS.build(Environment.get(apiUserCredentials.getApiKey()),
-			                URLPath.QUICKO_GSP_AUTHENTICATE))
-			        .post(requestBody).header(USER_AGENT, USER_AGENT_VALUE)
-			        .header("x-api-key", apiUserCredentials.getApiKey())
+			        .url(ENDPOINTS.build(environment.getHost(), URLPath.QUICKO_GSP_AUTHENTICATE)).post(requestBody)
+			        .header(USER_AGENT, USER_AGENT_VALUE).header("x-api-key", apiUserCredentials.getApiKey())
 			        .header("x-api-secret", apiUserCredentials.getApiSecret()).build();
 
 			final Response response = client.newCall(request).execute();
@@ -108,7 +111,7 @@ public class ApiSessionProvider
 
 				if (response.code() != 200)
 				{
-					throw new AuthorizationException(jsonObject.get("error").toString(), transactionId);
+					throw new AuthorizationException(transactionId, jsonObject.get("error").toString());
 				}
 
 				this.accessToken = jsonObject.getString("access_token");
@@ -116,8 +119,8 @@ public class ApiSessionProvider
 			}
 			else
 			{
-				throw new AuthorizationException("Unexpected content type received from server: "
-				        + response.header("Content-Type") + " " + response.body().string(), transactionId);
+				throw new AuthorizationException(transactionId, "Unexpected content type received from server: "
+				        + response.header("Content-Type") + " " + response.body().string());
 			}
 		}
 		catch (final IOException | JSONException ioE)
@@ -135,10 +138,9 @@ public class ApiSessionProvider
 			final RequestBody requestBody = builder.build();
 
 			final Request request = new Request.Builder()
-			        .url(ENDPOINTS.build(Environment.get(apiUserCredentials.getApiKey()), URLPath.QUICKO_GSP_AUTHORIZE))
-			        .post(requestBody).header(USER_AGENT, USER_AGENT_VALUE)
-			        .header("x-api-key", apiUserCredentials.getApiKey()).header("Authorization", this.refreshToken)
-			        .build();
+			        .url(ENDPOINTS.build(environment.getHost(), URLPath.QUICKO_GSP_AUTHORIZE)).post(requestBody)
+			        .header(USER_AGENT, USER_AGENT_VALUE).header("x-api-key", apiUserCredentials.getApiKey())
+			        .header("Authorization", this.refreshToken).build();
 
 			final Response response = client.newCall(request).execute();
 
@@ -150,15 +152,15 @@ public class ApiSessionProvider
 
 				if (response.code() != 200)
 				{
-					throw new AuthorizationException(jsonObject.get("error").toString(), transactionId);
+					throw new AuthorizationException(transactionId, jsonObject.get("error").toString());
 				}
 
 				this.accessToken = jsonObject.getString("access_token");
 			}
 			else
 			{
-				throw new AuthorizationException("Unexpected content type received from server: "
-				        + response.header("Content-Type") + " " + response.body().string(), transactionId);
+				throw new AuthorizationException(transactionId, "Unexpected content type received from server: "
+				        + response.header("Content-Type") + " " + response.body().string());
 			}
 		}
 		catch (final IOException | JSONException ioE)

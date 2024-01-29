@@ -6,7 +6,7 @@
 
 	<groupId>com.quicko.gsp</groupId>
 	<artifactId>api-client</artifactId>
-	<version>1.0.0</version>
+	<version>0.1.0</version>
 	<name>api-client</name>
 
 	<description>Quicko GSP API client</description>

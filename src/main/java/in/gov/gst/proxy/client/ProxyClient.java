@@ -10,7 +10,6 @@ import org.json.JSONObject;
 import in.gov.gst.beans.ApiResponse;
 import in.gov.gst.exception.GSTNException;
 import in.gov.gst.mapper.ObjectMapper;
-import in.gov.gst.type.Environment;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Response;
@@ -56,7 +55,7 @@ public abstract class ProxyClient
 
 	protected String appKey;
 
-	protected Environment environment;
+	protected String baseUrl;
 
 	protected String encryptedAppKey;
 
@@ -72,12 +71,12 @@ public abstract class ProxyClient
 	}
 
 	public ProxyClient(final OkHttpClient client, final String appKey, final String encryptedAppKey,
-	        final Environment environment, final String whiteListedIpAddress)
+	        final String baseUrl, final String whiteListedIpAddress)
 	{
 		this.client = client;
 		this.appKey = appKey;
 		this.encryptedAppKey = encryptedAppKey;
-		this.environment = environment;
+		this.baseUrl = baseUrl;
 		this.whiteListedIpAddress = whiteListedIpAddress;
 		this.mapper = new ObjectMapper();
 	}

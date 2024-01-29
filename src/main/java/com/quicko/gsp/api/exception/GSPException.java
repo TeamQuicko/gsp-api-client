@@ -5,7 +5,7 @@ import com.quicko.gsp.api.client.GSPHTTPClient;
 
 import in.gov.gst.beans.ApiResponse;
 
-public class QuickoGSPException extends Throwable
+public class GSPException extends Throwable
 {
 
 	/** TODO Auto-generated JavaDoc */
@@ -17,7 +17,7 @@ public class QuickoGSPException extends Throwable
 	@JsonProperty("data")
 	private ApiResponse apiResponse;
 
-	public QuickoGSPException(final ApiResponse apiResponse)
+	public GSPException(final ApiResponse apiResponse)
 	{
 		this.apiResponse = apiResponse;
 		this.transactionId =

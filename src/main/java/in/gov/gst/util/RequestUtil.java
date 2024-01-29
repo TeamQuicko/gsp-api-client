@@ -19,7 +19,7 @@ import org.bouncycastle.crypto.params.KeyParameter;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import in.gov.gst.exception.CryptoException;
+import in.gov.gst.exception.CryptographyException;
 
 public class RequestUtil
 {
@@ -56,7 +56,7 @@ public class RequestUtil
 	}
 
 	public static String encryptAppKey(final String newAppKey, final String appKey, final String sek)
-	        throws CryptoException
+	        throws CryptographyException
 	{
 		try
 		{
@@ -70,12 +70,12 @@ public class RequestUtil
 		catch (final JSONException | IOException | InvalidKeyException | IllegalBlockSizeException
 		        | BadPaddingException ex)
 		{
-			throw new CryptoException("Failed to encrypt app Key", ex);
+			throw new CryptographyException("Failed to encrypt app Key", ex);
 		}
 	}
 
 	public static JSONObject encrypt(final String sek, final String appKey, final String data, final String action)
-	        throws CryptoException
+	        throws CryptographyException
 	{
 		try
 		{
@@ -97,12 +97,12 @@ public class RequestUtil
 		catch (final JSONException | InvalidKeyException | IllegalBlockSizeException | BadPaddingException
 		        | IOException ex)
 		{
-			throw new CryptoException("Failed to encrypt data", ex);
+			throw new CryptographyException("Failed to encrypt data", ex);
 		}
 	}
 
 	public static JSONObject encrypt(final String sek, final String appKey, final String data, final String action,
-	        final String pan, final String otp) throws CryptoException
+	        final String pan, final String otp) throws CryptographyException
 	{
 		try
 		{
@@ -135,7 +135,7 @@ public class RequestUtil
 		catch (final JSONException | InvalidKeyException | IllegalBlockSizeException | BadPaddingException
 		        | IOException ex)
 		{
-			throw new CryptoException("Failed to encrypt data", ex);
+			throw new CryptographyException("Failed to encrypt data", ex);
 		}
 	}
 
@@ -149,20 +149,19 @@ public class RequestUtil
 		return java.util.Base64.getDecoder().decode(stringData.getBytes(CHARACTER_ENCODING));
 	}
 
-	private static String encryptEK(final byte[] plaintext, final byte[] secret)
+	private static String encryptEK(final byte[] plaintext, final byte[] secret) throws CryptographyException
 	{
+		final SecretKeySpec sk = new SecretKeySpec(secret, AES_ALGORITHM);
 		try
 		{
-
-			final SecretKeySpec sk = new SecretKeySpec(secret, AES_ALGORITHM);
 			ENCRYPT_CIPHER.init(Cipher.ENCRYPT_MODE, sk);
 			return Base64.encodeBase64String(ENCRYPT_CIPHER.doFinal(plaintext));
-
 		}
-		catch (final Exception e)
+		catch (InvalidKeyException | IllegalBlockSizeException | BadPaddingException e)
 		{
-			return "";
+			throw new CryptographyException("Failed to encrypt data", e);
 		}
+
 	}
 
 	private static byte[] decrypt(final String plaintext, final byte[] secret)
@@ -192,18 +191,11 @@ public class RequestUtil
 		return encodeBase64String(resBuf);
 	}
 
-	private static byte[] getJsonBase64Payload(final String str)
+	private static byte[] getJsonBase64Payload(final String str) throws JSONException
 	{
 
 		JSONObject obj = null;
-		try
-		{
-			obj = new JSONObject(str);
-		}
-		catch (final JSONException e)
-		{
-			// ignore
-		}
+		obj = new JSONObject(str);
 
 		return Base64.encodeBase64(obj.toString().getBytes());
 	}

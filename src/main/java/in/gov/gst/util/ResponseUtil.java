@@ -15,7 +15,7 @@ import javax.crypto.spec.SecretKeySpec;
 
 import org.apache.commons.codec.binary.Base64;
 
-import in.gov.gst.exception.CryptoException;
+import in.gov.gst.exception.CryptographyException;
 import in.gov.gst.exception.VerificationException;
 
 public class ResponseUtil
@@ -106,7 +106,7 @@ public class ResponseUtil
 	}
 
 	public static String decrypt(final String appKey, final String sek, final String rek, final String data)
-	        throws CryptoException
+	        throws CryptographyException
 	{
 		try
 		{
@@ -118,13 +118,13 @@ public class ResponseUtil
 		}
 		catch (InvalidKeyException | IllegalBlockSizeException | BadPaddingException | UnsupportedEncodingException e)
 		{
-			throw new CryptoException("Failed to decrypt Data");
+			throw new CryptographyException("Failed to decrypt Data");
 		}
 
 	}
 
 	public static String decryptwithHMACVerification(final String appKey, final String sek, final String rek,
-	        final String data, final String hmac) throws CryptoException, VerificationException
+	        final String data, final String hmac) throws CryptographyException, VerificationException
 	{
 		try
 		{
@@ -140,7 +140,7 @@ public class ResponseUtil
 		}
 		catch (InvalidKeyException | IllegalBlockSizeException | BadPaddingException | UnsupportedEncodingException e)
 		{
-			throw new CryptoException("Failed to decrypt Data");
+			throw new CryptographyException("Failed to decrypt Data");
 		}
 
 	}

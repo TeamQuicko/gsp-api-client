@@ -29,9 +29,9 @@ public class ENDPOINTS
 		}
 	}
 
-	public static String build(Environment env, URLPath urlPath, Object... args)
+	public static String build(String baseUrl, URLPath urlPath, Object... args)
 	{
-		String url = new StringBuilder().append(env.getHost()).append(urlPath.getValue()).toString();
+		String url = new StringBuilder().append(baseUrl).append(urlPath.getValue()).toString();
 		String regex = "\\{(\\w*)\\}";
 
 		Pattern pattern = Pattern.compile(regex);

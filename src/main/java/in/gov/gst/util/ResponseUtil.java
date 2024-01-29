@@ -47,11 +47,6 @@ public class ResponseUtil
 		}
 	}
 
-	private static byte[] decodeBase64StringToByte(final String stringData) throws UnsupportedEncodingException
-	{
-		return java.util.Base64.getDecoder().decode(stringData.getBytes(CHARACTER_ENCODING));
-	}
-
 	private static byte[] decrypt(final String plaintext, final byte[] secret)
 	        throws InvalidKeyException, IllegalBlockSizeException, BadPaddingException
 	{
@@ -63,7 +58,7 @@ public class ResponseUtil
 	private static byte[] generatePaddedSek(final String sek, final String decAppKey)
 	        throws InvalidKeyException, IllegalBlockSizeException, BadPaddingException, UnsupportedEncodingException
 	{
-		final byte[] decSek = decrypt(sek, decodeBase64StringToByte(decAppKey));
+		final byte[] decSek = decrypt(sek, java.util.Base64.getDecoder().decode(decAppKey.getBytes(CHARACTER_ENCODING)));
 		return decSek;
 	}
 
@@ -77,7 +72,7 @@ public class ResponseUtil
 	private static String decryptGstrData(final String gstrResp, final byte[] encRek)
 	        throws InvalidKeyException, UnsupportedEncodingException, IllegalBlockSizeException, BadPaddingException
 	{
-		final String originalData = new String(decodeBase64StringToByte((new String((decrypt(gstrResp, encRek))))));
+		final String originalData = new String(java.util.Base64.getDecoder().decode((new String((decrypt(gstrResp, encRek)))).getBytes(CHARACTER_ENCODING)));
 		return originalData;
 	}
 
@@ -147,6 +142,6 @@ public class ResponseUtil
 
 	public static String decodeb64Payload(final String payload) throws UnsupportedEncodingException
 	{
-		return new String(decodeBase64StringToByte(payload));
+		return new String(java.util.Base64.getDecoder().decode(payload.getBytes(CHARACTER_ENCODING)));
 	}
 }

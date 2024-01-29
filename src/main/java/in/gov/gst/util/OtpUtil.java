@@ -40,21 +40,15 @@ public class OtpUtil
 		}
 	}
 
-	private static String encryptOTP(final byte[] plaintext, final byte[] secret)
-	        throws InvalidKeyException, IllegalBlockSizeException, BadPaddingException
-	{
-		final SecretKeySpec sk = new SecretKeySpec(secret, AES_ALGORITHM);
-		ENCRYPT_CIPHER.init(Cipher.ENCRYPT_MODE, sk);
-		return Base64.encodeBase64String(ENCRYPT_CIPHER.doFinal(plaintext));
-
-	}
-
 	public static String encrypt(final String appKey, final String otp) throws CryptographyException
 	{
 		try
 		{
 			final byte[] decryptedAppKey = java.util.Base64.getDecoder().decode(appKey.getBytes(CHARACTER_ENCODING));
-			return encryptOTP(otp.getBytes(), decryptedAppKey);
+			
+			final SecretKeySpec sk = new SecretKeySpec(decryptedAppKey, AES_ALGORITHM);
+			ENCRYPT_CIPHER.init(Cipher.ENCRYPT_MODE, sk);
+			return Base64.encodeBase64String(ENCRYPT_CIPHER.doFinal(otp.getBytes()));
 		}
 		catch (JSONException | InvalidKeyException | IllegalBlockSizeException | BadPaddingException
 		        | UnsupportedEncodingException e)

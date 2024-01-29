@@ -45,11 +45,6 @@ public class AppKeyUtil
 		}
 	}
 
-	private static byte[] decodeBase64StringToByte(final String payload) throws UnsupportedEncodingException
-	{
-		return java.util.Base64.getDecoder().decode(payload.getBytes(CHARACTER_ENCODING));
-	}
-
 	public static byte[] decrypt(final String encryptedPayload, final byte[] secret)
 	        throws InvalidKeyException, IOException, IllegalBlockSizeException, BadPaddingException
 	{
@@ -78,7 +73,7 @@ public class AppKeyUtil
 	public static String encryptAppkey(PublicKey publicKey, final String appKey) throws InvalidKeyException,
 	        NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException, Exception
 	{
-		return encrypt(publicKey, decodeBase64StringToByte(appKey));
+		return encrypt(publicKey, java.util.Base64.getDecoder().decode(appKey.getBytes(CHARACTER_ENCODING)));
 	}
 
 }

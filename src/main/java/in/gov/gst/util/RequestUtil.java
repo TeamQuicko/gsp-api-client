@@ -62,7 +62,7 @@ public class RequestUtil
 		{
 			ek = generatePaddedSek(sek, appKey);
 
-			final String encAppKey = encryptEK(decodeBase64StringTOByte(newAppKey), ek);
+			final String encAppKey = encryptEK(java.util.Base64.getDecoder().decode(newAppKey.getBytes(CHARACTER_ENCODING)), ek);
 
 			return encAppKey;
 
@@ -139,16 +139,6 @@ public class RequestUtil
 		}
 	}
 
-	private static String encodeBase64String(final byte[] bytes)
-	{
-		return new String(java.util.Base64.getEncoder().encode(bytes));
-	}
-
-	private static byte[] decodeBase64StringTOByte(final String stringData) throws UnsupportedEncodingException
-	{
-		return java.util.Base64.getDecoder().decode(stringData.getBytes(CHARACTER_ENCODING));
-	}
-
 	private static String encryptEK(final byte[] plaintext, final byte[] secret) throws CryptographyException
 	{
 		final SecretKeySpec sk = new SecretKeySpec(secret, AES_ALGORITHM);
@@ -175,7 +165,7 @@ public class RequestUtil
 	private static byte[] generatePaddedSek(final String sek, final String decAppKey) throws InvalidKeyException,
 	        IllegalBlockSizeException, BadPaddingException, UnsupportedEncodingException, IOException
 	{
-		final byte[] decSek = decrypt(sek, decodeBase64StringTOByte(decAppKey));
+		final byte[] decSek = decrypt(sek, java.util.Base64.getDecoder().decode(decAppKey.getBytes(CHARACTER_ENCODING)));
 		return decSek;
 	}
 
@@ -188,7 +178,7 @@ public class RequestUtil
 		hmac.update(data, 0, data.length);
 		hmac.doFinal(resBuf, 0);
 
-		return encodeBase64String(resBuf);
+		return new String(java.util.Base64.getEncoder().encode(resBuf));
 	}
 
 	private static byte[] getJsonBase64Payload(final String str) throws JSONException

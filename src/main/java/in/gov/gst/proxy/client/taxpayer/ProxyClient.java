@@ -20,7 +20,6 @@ import in.gov.gst.util.OtpUtil;
 import in.gov.gst.util.RequestUtil;
 import okhttp3.Headers;
 import okhttp3.HttpUrl;
-import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
@@ -74,10 +73,10 @@ public class ProxyClient extends in.gov.gst.proxy.client.ProxyClient
 
 	public static String RESPONSE_PAYLOAD_ATTRUBUTE_REK = "rek";
 
-	public ProxyClient(final OkHttpClient client, String appKey, String encryptedAppKey, String baseUrl,
-	        String whiteListedIpAddress)
+	public ProxyClient(final String appKey, final String encryptedAppKey, final String baseUrl,
+	        final String whiteListedIpAddress, final String clientId, final String clientSecret)
 	{
-		super(client, appKey, encryptedAppKey, baseUrl, whiteListedIpAddress);
+		super(appKey, encryptedAppKey, baseUrl, whiteListedIpAddress, clientId, clientSecret);
 	}
 
 	public TaxpayerApiResponse generateOtp(final String version, final String userName, final String gstin)
@@ -97,6 +96,9 @@ public class ProxyClient extends in.gov.gst.proxy.client.ProxyClient
 		Headers.Builder headers = new Headers.Builder();
 		headers.add(ProxyClient.HEADER_ATTRIBUTE_STATE_CD, gstin.substring(0, 2));
 		headers.add(ProxyClient.HEADER_ATTRIBUTE_IP, this.whiteListedIpAddress);
+		headers.add("clientid", this.clientId);
+		headers.add("client-secret", this.clientSecret);
+		headers.add("txn", "asadacaaqw4323425234v23542412vq");
 
 		final Request request =
 		        new Request.Builder().url(ENDPOINTS.build(this.baseUrl, URLPath.GSTN_TAX_PAYER, version))
@@ -128,6 +130,9 @@ public class ProxyClient extends in.gov.gst.proxy.client.ProxyClient
 
 		headers.add(ProxyClient.HEADER_ATTRIBUTE_STATE_CD, gstin.substring(0, 2));
 		headers.add(ProxyClient.HEADER_ATTRIBUTE_IP, this.whiteListedIpAddress);
+		headers.add("clientid", this.clientId);
+		headers.add("client-secret", this.clientSecret);
+		headers.add("txn", "asadacaaqw4323425234v23542412vq");
 
 		final Request request =
 		        new Request.Builder().url(ENDPOINTS.build(this.baseUrl, URLPath.GSTN_TAX_PAYER, version))
@@ -163,6 +168,8 @@ public class ProxyClient extends in.gov.gst.proxy.client.ProxyClient
 		headers.add(HEADER_ATTRIBUTE_USER_NAME, taxpayerSession.getUserName());
 		headers.add(HEADER_ATTRIBUTE_AUTH_TOKEN, taxpayerSession.getAuthToken());
 		headers.add(ProxyClient.HEADER_ATTRIBUTE_IP, this.whiteListedIpAddress);
+		headers.add("clientid", this.clientId);
+		headers.add("client-secret", this.clientSecret);
 
 		final Request request =
 		        new Request.Builder().url(ENDPOINTS.build(this.baseUrl, URLPath.GSTN_TAX_PAYER, version))
@@ -201,6 +208,9 @@ public class ProxyClient extends in.gov.gst.proxy.client.ProxyClient
 		headers.add(HEADER_ATTRIBUTE_USER_NAME, taxpayerSession.getUserName());
 		headers.add(HEADER_ATTRIBUTE_AUTH_TOKEN, taxpayerSession.getAuthToken());
 		headers.add(ProxyClient.HEADER_ATTRIBUTE_IP, this.whiteListedIpAddress);
+		headers.add("clientid", this.clientId);
+		headers.add("client-secret", this.clientSecret);
+		headers.add("txn", "asadacaaqw4323425234v23542412vq");
 
 		final Request request =
 		        new Request.Builder().url(ENDPOINTS.build(this.baseUrl, URLPath.GSTN_TAX_PAYER, version))
@@ -233,6 +243,9 @@ public class ProxyClient extends in.gov.gst.proxy.client.ProxyClient
 		headers.add(ProxyClient.HEADER_ATTRIBUTE_USER_NAME, taxpayerSession.getUserName());
 		headers.add(ProxyClient.HEADER_ATTRIBUTE_AUTH_TOKEN, taxpayerSession.getAuthToken());
 		headers.add(ProxyClient.HEADER_ATTRIBUTE_IP, this.whiteListedIpAddress);
+		headers.add("clientid", this.clientId);
+		headers.add("client-secret", this.clientSecret);
+		headers.add("txn", "asadacaaqw4323425234v23542412vq");
 		if (requestHeaders != null)
 		{
 			for (Entry<String, String> requestHeader : requestHeaders.entrySet())
@@ -267,6 +280,9 @@ public class ProxyClient extends in.gov.gst.proxy.client.ProxyClient
 		headers.add(ProxyClient.HEADER_ATTRIBUTE_USER_NAME, taxpayerSession.getUserName());
 		headers.add(ProxyClient.HEADER_ATTRIBUTE_AUTH_TOKEN, taxpayerSession.getAuthToken());
 		headers.add(ProxyClient.HEADER_ATTRIBUTE_IP, this.whiteListedIpAddress);
+		headers.add("clientid", this.clientId);
+		headers.add("client-secret", this.clientSecret);
+		headers.add("txn", "asadacaaqw4323425234v23542412vq");
 		if (requestHeaders != null)
 		{
 			for (Entry<String, String> requestHeader : requestHeaders.entrySet())
@@ -307,6 +323,9 @@ public class ProxyClient extends in.gov.gst.proxy.client.ProxyClient
 		headers.add(ProxyClient.HEADER_ATTRIBUTE_USER_NAME, taxpayerSession.getUserName());
 		headers.add(ProxyClient.HEADER_ATTRIBUTE_AUTH_TOKEN, taxpayerSession.getAuthToken());
 		headers.add(ProxyClient.HEADER_ATTRIBUTE_IP, this.whiteListedIpAddress);
+		headers.add("clientid", this.clientId);
+		headers.add("client-secret", this.clientSecret);
+		headers.add("txn", "asadacaaqw4323425234v23542412vq");
 		if (requestHeaders != null)
 		{
 			for (Entry<String, String> requestHeader : requestHeaders.entrySet())
@@ -351,6 +370,9 @@ public class ProxyClient extends in.gov.gst.proxy.client.ProxyClient
 		headers.add(ProxyClient.HEADER_ATTRIBUTE_TAXPAYER_RETURN_USER_ROLE, rtnType.value().replace("-", ""));
 		headers.add(ProxyClient.HEADER_ATTRIBUTE_TAXPAYER_RETURN_TYPE, rtnType.value().replace("-", ""));
 		headers.add(ProxyClient.HEADER_ATTRIBUTE_TAXPAYER_RETURN_API_VERSION, version.replace("v", ""));
+		headers.add("clientid", this.clientId);
+		headers.add("client-secret", this.clientSecret);
+		headers.add("txn", "asadacaaqw4323425234v23542412vq");
 		if (requestHeaders != null)
 		{
 			for (Entry<String, String> requestHeader : requestHeaders.entrySet())
@@ -368,6 +390,8 @@ public class ProxyClient extends in.gov.gst.proxy.client.ProxyClient
 		hdr.put(ProxyClient.HEADER_ATTRIBUTE_TAXPAYER_RETURN_USER_ROLE, rtnType.value().replace("-", ""));
 		hdr.put(ProxyClient.HEADER_ATTRIBUTE_TAXPAYER_RETURN_TYPE, rtnType.value().replace("-", ""));
 		hdr.put(ProxyClient.HEADER_ATTRIBUTE_TAXPAYER_RETURN_API_VERSION, version.replace("v", ""));
+		hdr.put("clientid", this.clientId);
+		hdr.put("txn", "asadacaaqw4323425234v23542412vq");
 
 		JSONObject requestBody =
 		        RequestUtil.encrypt(taxpayerSession.getSek(), taxpayerSession.getAppKey(), json.toString(), action);
@@ -403,6 +427,9 @@ public class ProxyClient extends in.gov.gst.proxy.client.ProxyClient
 		headers.add(ProxyClient.HEADER_ATTRIBUTE_USER_NAME, taxpayerSession.getUserName());
 		headers.add(ProxyClient.HEADER_ATTRIBUTE_AUTH_TOKEN, taxpayerSession.getAuthToken());
 		headers.add(ProxyClient.HEADER_ATTRIBUTE_TAXPAYER_RETURN_USER_ROLE, rtnType.value().replace("-", ""));
+		headers.add("clientid", this.clientId);
+		headers.add("client-secret", this.clientSecret);
+		headers.add("txn", "asadacaaqw4323425234v23542412vq");
 		if ("RETNEWPTF".equalsIgnoreCase(action) || "PROCEEDFILE".equalsIgnoreCase(action))
 		{
 			headers.add(ProxyClient.HEADER_ATTRIBUTE_TAXPAYER_RETURN_TYPE, rtnType.type());
@@ -429,6 +456,8 @@ public class ProxyClient extends in.gov.gst.proxy.client.ProxyClient
 		hdr.put(ProxyClient.HEADER_ATTRIBUTE_IP, this.whiteListedIpAddress);
 		hdr.put(ProxyClient.HEADER_ATTRIBUTE_TAXPAYER_RETURN_USER_ROLE, rtnType.value().replace("-", ""));
 		hdr.put(ProxyClient.HEADER_ATTRIBUTE_TAXPAYER_RETURN_API_VERSION, version.replace("v", ""));
+		hdr.put("clientid", this.clientId);
+		hdr.put("txn", "asadacaaqw4323425234v23542412vq");
 
 		// sets type attribute of enum in returnType header for of proceed to file apis else sets value attribute of
 		// enum for other apis
@@ -476,6 +505,9 @@ public class ProxyClient extends in.gov.gst.proxy.client.ProxyClient
 		headers.add(ProxyClient.HEADER_ATTRIBUTE_TAXPAYER_RETURN_USER_ROLE, rtnType.value().replace("-", ""));
 		headers.add(ProxyClient.HEADER_ATTRIBUTE_TAXPAYER_RETURN_TYPE, rtnType.value().replace("-", ""));
 		headers.add(ProxyClient.HEADER_ATTRIBUTE_TAXPAYER_RETURN_API_VERSION, version.replace("v", ""));
+		headers.add("clientid", this.clientId);
+		headers.add("client-secret", this.clientSecret);
+		headers.add("txn", "asadacaaqw4323425234v23542412vq");
 		if (requestHeaders != null)
 		{
 			for (Entry<String, String> requestHeader : requestHeaders.entrySet())
@@ -493,6 +525,8 @@ public class ProxyClient extends in.gov.gst.proxy.client.ProxyClient
 		hdr.put(ProxyClient.HEADER_ATTRIBUTE_TAXPAYER_RETURN_USER_ROLE, rtnType.value().replace("-", ""));
 		hdr.put(ProxyClient.HEADER_ATTRIBUTE_TAXPAYER_RETURN_TYPE, rtnType.value().replace("-", ""));
 		hdr.put(ProxyClient.HEADER_ATTRIBUTE_TAXPAYER_RETURN_API_VERSION, version.replace("v", ""));
+		hdr.put("clientid", this.clientId);
+		hdr.put("txn", "asadacaaqw4323425234v23542412vq");
 
 		JSONObject requestBody = RequestUtil.encrypt(taxpayerSession.getSek(), taxpayerSession.getAppKey(),
 		        json.toString(), action, pan, otp);

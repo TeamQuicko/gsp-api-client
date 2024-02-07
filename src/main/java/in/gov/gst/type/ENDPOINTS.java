@@ -12,6 +12,8 @@ public abstract class ENDPOINTS
 	public enum URLPath
 	{
 
+		GSTN_COMMONS_AUTHENTICATE("/commonapi/v0.2/authenticate"),
+
 		GSTN_COMMONS_SEARCH_TAX_PAYER("/commonapi/{version}/search"),
 
 		GSTN_COMMONS_TRACK_RETURNS("/commonapi/{version}/returns"),

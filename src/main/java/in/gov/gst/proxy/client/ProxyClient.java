@@ -13,6 +13,7 @@ import in.gov.gst.mapper.ObjectMapper;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Response;
+import okhttp3.logging.HttpLoggingInterceptor;
 
 public abstract class ProxyClient
 {
@@ -57,6 +58,10 @@ public abstract class ProxyClient
 
 	protected String baseUrl;
 
+	protected String clientId;
+
+	protected String clientSecret;
+
 	protected String encryptedAppKey;
 
 	protected ObjectMapper mapper;
@@ -65,19 +70,27 @@ public abstract class ProxyClient
 
 	protected OkHttpClient client;
 
-	protected OkHttpClient getClient()
+	public ProxyClient(final String appKey, final String encryptedAppKey, final String baseUrl,
+	        final String whiteListedIpAddress, final String clientId, final String clientSecret)
 	{
-		return client;
-	}
+		final HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
 
-	public ProxyClient(final OkHttpClient client, final String appKey, final String encryptedAppKey,
-	        final String baseUrl, final String whiteListedIpAddress)
-	{
-		this.client = client;
+		logging.setLevel(HttpLoggingInterceptor.Level.BODY);
+
+		this.client = new OkHttpClient.Builder().addInterceptor(logging).build();
+
 		this.appKey = appKey;
+
 		this.encryptedAppKey = encryptedAppKey;
+
 		this.baseUrl = baseUrl;
+
+		this.clientId = clientId;
+
+		this.clientSecret = clientSecret;
+
 		this.whiteListedIpAddress = whiteListedIpAddress;
+
 		this.mapper = new ObjectMapper();
 	}
 
@@ -95,4 +108,65 @@ public abstract class ProxyClient
 		}
 		return apiResponse;
 	}
+
+	public String getAppKey()
+	{
+		return appKey;
+	}
+
+	public void setAppKey(String appKey)
+	{
+		this.appKey = appKey;
+	}
+
+	public String getBaseUrl()
+	{
+		return baseUrl;
+	}
+
+	public void setBaseUrl(String baseUrl)
+	{
+		this.baseUrl = baseUrl;
+	}
+
+	public String getEncryptedAppKey()
+	{
+		return encryptedAppKey;
+	}
+
+	public void setEncryptedAppKey(String encryptedAppKey)
+	{
+		this.encryptedAppKey = encryptedAppKey;
+	}
+
+	public ObjectMapper getMapper()
+	{
+		return mapper;
+	}
+
+	public void setMapper(ObjectMapper mapper)
+	{
+		this.mapper = mapper;
+	}
+
+	public String getWhiteListedIpAddress()
+	{
+		return whiteListedIpAddress;
+	}
+
+	public void setWhiteListedIpAddress(String whiteListedIpAddress)
+	{
+		this.whiteListedIpAddress = whiteListedIpAddress;
+	}
+
+	public OkHttpClient getClient()
+	{
+		return client;
+	}
+
+	public void setClient(OkHttpClient client)
+	{
+		this.client = client;
+	}
+
 }
